@@ -1,0 +1,83 @@
+---
+# Bad ansible! This playbook is an example of poor/bad practices!
+# Bad practices may include:
+#
+#   Poor formatting and structure
+#   Poor use of YAML - but good enough to parse
+#   Inconsistent style
+#   Incorrect use of modules
+#   Poor module choice
+#   Unclear names
+#   Hard coding / poor use of variables
+#   Roles - what are roles?
+#   Bare variables
+#   No use of handlers
+
+- name: configuration
+  hosts: all
+  gather_facts: true
+  become: true
+
+  vars:
+   - include_vars: vault.yml
+
+  tasks:
+  - debug: var=url
+
+  - name: enable repos using yum_repository
+    yum_repository:
+     name: "{{ item.name }}"
+     description: "{{ item.description }}"
+     baseurl: "{{ item.baseurl }}"
+     enabled: "{{ item.enabled }}"
+     gpgcheck: "{{ item.gpgcheck }}"
+    with_items:
+     - { name: "rhel-7-server-rpms" , description: "Red Hat Enterprise Linux 7" , baseurl: "{{ url }}/rhel-7-server-rpms" , enabled: "1" , gpgcheck: "0" }
+     - { name: "rhel-7-server-rh-common-rpms" , description: "Red Hat Enterprise Linux 7 Common" , baseurl: "{{ url }}/rhel-7-server-rh-common-rpms" , enabled: "1", gpgcheck: "0" }
+     - { name: "rhel-7-server-extras-rpms" , description: "Red Hat Enterprise Linux 7 Extras" , baseurl: "{{ url }}/rhel-7-server-extras-rpms" , enabled: "1" , gpgcheck: "0" }
+     - { name: "rhel-7-server-optional-rpms" , description: "Red Hat Enterprise Linux 7 Optional" , baseurl: "{{ url }}/rhel-7-server-optional-rpms" , enabled: "1" , gpgcheck: "0"}
+
+  - name: add mirrorlist and failover method to epel yum repository
+    yum_repository:
+     name: "{{ item.name }}"
+     description: "{{ item.description }}"
+     baseurl: "{{ item.baseurl }}"
+     enabled: "{{ item.enabled }}"
+     gpgcheck: "{{ item.gpgcheck }}"
+     mirrorlist: "{{ item.mirrorlist }}"
+    with_items:
+     - { name: "epel", description: "Extra Packages for Enterprise Linux 7 - $basearch" , baseurl: "http://download.fedoraproject.org/pub/epel/7/$basearch", mirrorlist: "https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch" , enabled: "1" , gpgcheck: "0" , failovermethod: "priority" }
+
+- name: deploy haproxy
+  hosts: frontends
+  gather_facts: true
+  become: true
+
+  roles:
+  - { role: haproxy }
+
+- name: deploy tomcat
+  hosts: apps
+  gather_facts: true
+  become: true
+
+  roles:
+  - { role: tomcat }
+
+- name: deploy postgres
+  hosts: apps
+  gather_facts: true
+  become: true
+  hosts: appdbs
+
+  roles:
+  - { role: geerlingguy.postgresql }
+
+- name: deploy apache
+  hosts: apps
+  gather_facts: false
+  become: true
+  hosts: apps
+
+  roles:
+  - { role: apache }

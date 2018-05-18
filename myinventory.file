@@ -1,0 +1,24 @@
+[3tierapp:children]
+frontends
+apps
+appdbs
+support
+
+
+[frontends]
+## These are the frontends
+frontend1.7d44.internal ansible_ssh_host=frontend1.7d44.example.opentlc.com ansible_user=ec2-user
+
+[apps]
+## These are the apps
+app1.7d44.internal ansible_ssh_host=app1.7d44.example.opentlc.com ansible_user=ec2-user
+app2.7d44.internal ansible_ssh_host=app2.7d44.example.opentlc.com ansible_user=ec2-user
+
+[appdbs]
+## These are the appdbs
+appdb1.7d44.internal ansible_ssh_host=appdb1.7d44.example.opentlc.com ansible_user=ec2-user
+
+## These are the support
+[support]
+support1.7d44.internal ansible_ssh_host=support1.7d44.example.opentlc.com ansible_user=ec2-user
+
