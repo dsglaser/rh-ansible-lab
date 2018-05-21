@@ -1,0 +1,27 @@
+---
+  - name: enable repos using yum_repository
+    yum_repository:
+     name: "{{ item.name }}"
+     description: "{{ item.description }}"
+     baseurl: "{{ item.baseurl }}"
+     enabled: "{{ item.enabled }}"
+     gpgcheck: "{{ item.gpgcheck }}"
+     state: present
+    with_items:
+     - { name: "rhel-7-server-rpms" , description: "Red Hat Enterprise Linux 7" , baseurl: "{{ url }}/rhel-7-server-rpms" , enabled: "1" , gpgcheck: "0" }
+     - { name: "rhel-7-server-rh-common-rpms" , description: "Red Hat Enterprise Linux 7 Common" , baseurl: "{{ url }}/rhel-7-server-rh-common-rpms" , enabled: "1", gpgcheck: "0" }
+     - { name: "rhel-7-server-extras-rpms" , description: "Red Hat Enterprise Linux 7 Extras" , baseurl: "{{ url }}/rhel-7-server-extras-rpms" , enabled: "1" , gpgcheck: "0" }
+     - { name: "rhel-7-server-optional-rpms" , description: "Red Hat Enterprise Linux 7 Optional" , baseurl: "{{ url }}/rhel-7-server-optional-rpms" , enabled: "1" , gpgcheck: "0"}
+
+  - name: add mirrorlist and failover method to epel yum repository
+    yum_repository:
+     name: "{{ item.name }}"
+     description: "{{ item.description }}"
+     baseurl: "{{ item.baseurl }}"
+     enabled: "{{ item.enabled }}"
+     gpgcheck: "{{ item.gpgcheck }}"
+     mirrorlist: "{{ item.mirrorlist }}"
+     state: present
+    with_items:
+     - { name: "epel", description: "Extra Packages for Enterprise Linux 7 - $basearch" , baseurl: "http://download.fedoraproject.org/pub/epel/7/$basearch", mirrorlist: "https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch" , enabled: "1" , gpgcheck: "0" , failovermethod: "priority" }
+

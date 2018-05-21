@@ -18,3 +18,8 @@
     notify:
      - restart HAProxy
 
+  - name: Start haproxy if it isn't running
+    service:
+     name: haproxy
+     enabled: true
+     state: started
