@@ -24,7 +24,6 @@
       mode: 0644
     with_items:
      - { name: "index.html.j2" , path: "/usr/share/tomcat/webapps/ROOT/index.html" }
-     - { name: "index.html.{{ansible_hostname}}" , path: "/usr/share/tomcat/webapps/ansible/index.html" }
     notify: 
      - restart tomcat
 

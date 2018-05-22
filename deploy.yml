@@ -1,6 +1,6 @@
 ---
 
-- name: deploy haproxy
+- name: deploy haproy
   hosts: frontends
   gather_facts: true
   become: true
@@ -10,9 +10,9 @@
 
   roles:
    - { name: common }
-   - { role: haproxy }
+   - { name: haproxy }
 
-- name: deploy tomcat
+- name: deploy tomcat, postgres, and apache
   hosts: apps
   gather_facts: true
   become: true
@@ -23,29 +23,5 @@
   roles:
    - { name: common }
    - { role: tomcat }
-
-- name: deploy postgres
-  hosts: apps
-  gather_facts: true
-  become: true
-  hosts: appdbs
-
-  vars:
-   - include_vars: vault.yml
-
-  roles:
-   - { name: common }
    - { role: geerlingguy.postgresql }
 
-- name: deploy apache
-  hosts: apps
-  gather_facts: false
-  become: true
-  hosts: apps
-
-  vars:
-   - include_vars: vault.yml
-
-  roles:
-   - { name: common }
-   - { role: apache }
